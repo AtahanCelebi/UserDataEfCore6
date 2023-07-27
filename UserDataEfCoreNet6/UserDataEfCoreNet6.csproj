@@ -29,6 +29,7 @@
     <None Remove="Models\User\" />
     <None Remove="Models\Phone\" />
     <None Remove="Models\Email\" />
+    <None Remove="Configuration\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />
@@ -36,5 +37,6 @@
     <Folder Include="Models\User\" />
     <Folder Include="Models\Phone\" />
     <Folder Include="Models\Email\" />
+    <Folder Include="Configuration\" />
   </ItemGroup>
 </Project>

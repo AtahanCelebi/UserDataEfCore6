@@ -4,7 +4,6 @@ using UserDataEfCoreNet6.Data;
 using UserDataEfCoreNet6.Models.Email;
 using UserDataEfCoreNet6.Models.Phone;
 using UserDataEfCoreNet6.Models.User;
-
 namespace UserDataEfCoreNet6.Configuration
 {
 	public class MapperConfig: Profile

@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UserDataEfCoreNet6.Data;
-
+using UserDataEfCoreNet6.Models.User;
+using AutoMapper;
 namespace UserDataEfCoreNet6.Controllers
 {
     [Route("api/[controller]")]
@@ -14,10 +15,12 @@ namespace UserDataEfCoreNet6.Controllers
     public class UsersController : ControllerBase
     {
         private readonly UserDbContext _context;
+        private readonly IMapper _mapper;
 
-        public UsersController(UserDbContext context)
+        public UsersController(UserDbContext context, IMapper mapper)
         {
             _context = context;
+            this._mapper = mapper;
         }
 
         // GET: api/Users
@@ -31,13 +34,16 @@ namespace UserDataEfCoreNet6.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            //var user = await _context.Users.FindAsync(id);
+            var user = await _context.Users.Include(q => q.Phones) //users dbset'e git phone listesini al ve idler eşleşiyorsa getir
+                .Include(q => q.Email)
+                .FirstOrDefaultAsync(q => q.Id == id);
 
             if (user == null)
             {
                 return NotFound();
             }
-
+            var records = _mapper.Map<UserDto>(user);
             return user;
         }
 

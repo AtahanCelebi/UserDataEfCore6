@@ -68,8 +68,44 @@ namespace UserDataEfCoreNet6.Controllers
                 return BadRequest();
             }
 
-            var user = userDto.Adapt<User>();
-            _context.Entry(user).State = EntityState.Modified;
+            var user = await _context.Users.FindAsync(id);
+
+            if(user == null)
+            {
+                return NotFound();
+            }
+
+            if(!string.IsNullOrEmpty(userDto.Name))//yanlızca degisen ögeler içn
+            {
+                user.Name = userDto.Name;
+            }
+
+            if(userDto.Phones !=null && userDto.Phones.Any())
+            {
+                var phoneIds = userDto.Phones.Select(q => q.Id);
+                user.Phones.RemoveAll(q => !phoneIds.Contains(q.Id));
+
+
+                foreach(var phoneDto in userDto.Phones)
+                {
+                    var phone = user.Phones.FirstOrDefault(q => q.Id == phoneDto.Id);
+                    if(phone ==null)
+                    {
+                        phone = new Phone();
+                        user.Phones.Add(phone);
+                    }
+                    phone.PhoneNumber = phoneDto.PhoneNumber;
+                }
+            }
+
+            if(userDto.Email !=null)
+            {
+                if(user.Email==null)
+                {
+                    user.Email = new Email();
+                }
+                user.Email.EmailAddress = userDto.Email.EmailAddress;
+            }
 
             try
             {

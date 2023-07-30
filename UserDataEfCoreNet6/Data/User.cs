@@ -7,7 +7,7 @@ namespace UserDataEfCoreNet6.Data
         public string? Name { get; set; }
 
 
-        public virtual IList<Phone>? Phones { get; set; }
+        public virtual List<Phone> Phones { get; set; }
         public virtual Email? Email { get; set; }
     }
 }

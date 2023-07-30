@@ -21,6 +21,7 @@
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.20" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.20" />
+    <PackageReference Include="Mapster" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,6 +38,7 @@
     <Folder Include="Models\User\" />
     <Folder Include="Models\Phone\" />
     <Folder Include="Models\Email\" />
+    <Folder Include="Configuration\" />
     <Folder Include="Configuration\" />
   </ItemGroup>
 </Project>

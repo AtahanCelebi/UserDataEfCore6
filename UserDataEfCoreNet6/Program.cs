@@ -1,8 +1,9 @@
 ﻿using System.Text.Json.Serialization;
 using AutoMapper;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using UserDataEfCoreNet6.Configuration;
 using UserDataEfCoreNet6.Data;
+using UserDataEfCoreNet6.Configuration;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
@@ -17,7 +18,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddAutoMapper(typeof(MapperConfig));
 
 // Configure JSON serialization with ReferenceHandler.Preserve
 builder.Services.AddControllers()
@@ -26,6 +26,10 @@ builder.Services.AddControllers()
             options.JsonSerializerOptions.WriteIndented = true;
             options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
         });
+
+
+builder.Services.AddAutoMapper(typeof(MapperConfig));
+
 
 var app = builder.Build();
 

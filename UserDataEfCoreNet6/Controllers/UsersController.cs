@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UserDataEfCoreNet6.Data;
 using UserDataEfCoreNet6.Models.User;
-using AutoMapper;
+using UserDataEfCoreNet6.Models.Phone;
+using UserDataEfCoreNet6.Models.Email;
+using Mapster;
 namespace UserDataEfCoreNet6.Controllers
 {
     [Route("api/[controller]")]
@@ -15,12 +17,10 @@ namespace UserDataEfCoreNet6.Controllers
     public class UsersController : ControllerBase
     {
         private readonly UserDbContext _context;
-        private readonly IMapper _mapper;
 
-        public UsersController(UserDbContext context, IMapper mapper)
+        public UsersController(UserDbContext context)
         {
             _context = context;
-            this._mapper = mapper;
         }
 
         // GET: api/Users
@@ -32,31 +32,43 @@ namespace UserDataEfCoreNet6.Controllers
 
         // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
+        public async Task<ActionResult<UserDto>> GetUser(int id)
         {
             //var user = await _context.Users.FindAsync(id);
             var user = await _context.Users.Include(q => q.Phones) //users dbset'e git phone listesini al ve idler eşleşiyorsa getir
                 .Include(q => q.Email)
                 .FirstOrDefaultAsync(q => q.Id == id);
 
-            if (user == null)
+            var userDto = new UserDto
             {
-                return NotFound();
-            }
-            var records = _mapper.Map<UserDto>(user);
-            return user;
+                Id = user.Id,
+                Name = user.Name,
+                Phones = user.Phones.Select(q => new PhoneDto
+                {
+                    PhoneNumber = q.PhoneNumber,
+                }).ToList(),
+                Email = new EmailDto
+                {
+                    Id = user.Email.Id,
+                    EmailAddress = user.Email.EmailAddress
+                }
+                
+            };
+            return userDto 
+;
         }
 
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, User user)
+        public async Task<IActionResult> PutUser(int id,UserDto userDto)
         {
-            if (id != user.Id)
+            if (id != userDto.Id)
             {
                 return BadRequest();
             }
 
+            var user = userDto.Adapt<User>();
             _context.Entry(user).State = EntityState.Modified;
 
             try

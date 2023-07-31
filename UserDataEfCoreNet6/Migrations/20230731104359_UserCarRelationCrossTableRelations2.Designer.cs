@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UserDataEfCoreNet6.Data;
 
@@ -10,9 +11,10 @@ using UserDataEfCoreNet6.Data;
 namespace UserDataEfCoreNet6.Migrations
 {
     [DbContext(typeof(UserDbContext))]
-    partial class UserDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230731104359_UserCarRelationCrossTableRelations2")]
+    partial class UserCarRelationCrossTableRelations2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,6 +28,7 @@ namespace UserDataEfCoreNet6.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("CarName")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
@@ -167,7 +170,7 @@ namespace UserDataEfCoreNet6.Migrations
 
                     b.HasIndex("CarId");
 
-                    b.ToTable("UserCars");
+                    b.ToTable("UserCar");
                 });
 
             modelBuilder.Entity("UserDataEfCoreNet6.Data.Email", b =>

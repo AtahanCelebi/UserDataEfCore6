@@ -11,10 +11,24 @@ namespace UserDataEfCoreNet6.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Phone> Phones { get; set; }
         public DbSet<Email> Emails { get; set; }
+        public DbSet<UserCar> UserCars { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<UserCar>().HasKey(q => new { q.UserId, q.CarId });
+
+            modelBuilder.Entity<UserCar>()
+                .HasOne(i => i.User)
+                .WithMany(j => j.UserCars)
+                .HasForeignKey(k => k.UserId);
+
+            modelBuilder.Entity<UserCar>()
+                .HasOne(i => i.Car)
+                .WithMany(j => j.UserCars)
+                .HasForeignKey(k => k.CarId);
+
+
             modelBuilder.Entity<User>().HasData(
                 new User
                 {

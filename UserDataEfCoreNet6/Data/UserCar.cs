@@ -8,6 +8,8 @@ namespace UserDataEfCoreNet6.Data
 
         public int CarId { get; set; }
         public Car Car { get; set; }
+
+
     }
 }
 

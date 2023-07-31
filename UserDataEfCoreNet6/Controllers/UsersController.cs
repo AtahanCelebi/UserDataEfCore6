@@ -33,13 +33,11 @@ namespace UserDataEfCoreNet6.Controllers
 
         // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserDto>> GetUser(int id)
+        public async Task<ActionResult<UserResponseDto>> GetUser(int id)
         {
-            var user = await _context.Users
-                .Include(q => q.Phones)
+            var user = await _context.Users.Include(q => q.Phones)
                 .Include(q => q.Email)
-                .Include(q => q.UserCars) // Include the UserCars navigation property
-                .ThenInclude(uc => uc.Car) // Include the Car navigation property inside UserCars
+                .Include(q => q.UserCars).ThenInclude(i => i.Car)
                 .FirstOrDefaultAsync(q => q.Id == id);
 
             if (user == null)
@@ -47,83 +45,21 @@ namespace UserDataEfCoreNet6.Controllers
                 return NotFound();
             }
 
-            var userDto = new UserDto
+            var userResponseDto = new UserResponseDto
             {
                 Id = user.Id,
                 Name = user.Name,
-                Phones = user.Phones.Select(q => new PhoneDto
-                {
-                    PhoneNumber = q.PhoneNumber,
-                }).ToList(),
-                Email = new EmailDto
-                {
-                    Id = user.Email.Id,
-                    EmailAddress = user.Email.EmailAddress
-                },
-                Cars = user.UserCars.Select(uc => new CarDto
-                {
-                    CarName = uc.Car.CarName
-                }).ToList()
+                EmailAddress = user.Email?.EmailAddress,
+                Phones = user.Phones?.Select(q => q.PhoneNumber).ToList(),
+                CarNames = user.UserCars?.Select(q => q.Car.CarName).ToList()
             };
 
-            return userDto;
+            return userResponseDto;
+
         }
-
-
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id,UserDto userDto)
-        {
-            if (id != userDto.Id)
-            {
-                return BadRequest();
-            }
-
-            var user = await _context.Users.FindAsync(id);
-
-            if(user == null)
-            {
-                return NotFound();
-            }
-
-            if(!string.IsNullOrEmpty(userDto.Name))//yanlızca degisen ögeler içn
-            {
-                user.Name = userDto.Name;
-            }
-
-            if(userDto.Phones !=null && userDto.Phones.Any())
-            {
-                var phoneIds = userDto.Phones.Select(q => q.Id);
-                user.Phones.RemoveAll(q => !phoneIds.Contains(q.Id));
-
-
-                foreach(var phoneDto in userDto.Phones)
-                {
-                    var phone = user.Phones.FirstOrDefault(q => q.Id == phoneDto.Id);
-                    if(phone ==null)
-                    {
-                        phone = new Phone();
-                        user.Phones.Add(phone);
-                    }
-                    phone.PhoneNumber = phoneDto.PhoneNumber;
-                }
-            }
-
-            if(userDto.Email !=null)
-            {
-                if(user.Email==null)
-                {
-                    user.Email = new Email();
-                }
-                user.Email.EmailAddress = userDto.Email.EmailAddress;
-            }
-
-
-            await _context.SaveChangesAsync();
-
-            return Ok(new { message = "Kullanıcı başarıyla güncellendi" });
-        }
+        
 
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

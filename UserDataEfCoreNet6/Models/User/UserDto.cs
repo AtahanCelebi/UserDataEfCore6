@@ -1,6 +1,7 @@
 ﻿using System;
 using UserDataEfCoreNet6.Models.Email;
 using UserDataEfCoreNet6.Models.Phone;
+using UserDataEfCoreNet6.Models.Car;
 
 namespace UserDataEfCoreNet6.Models.User
 {
@@ -12,6 +13,7 @@ namespace UserDataEfCoreNet6.Models.User
 
         public List<PhoneDto>? Phones { get; set; }
         public EmailDto? Email { get; set; }
+        public List<CarDto>? Cars { get; set; }
     }
 }
 

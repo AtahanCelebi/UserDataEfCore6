@@ -28,7 +28,10 @@ namespace UserDataEfCoreNet6.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            return await _context.Users.ToListAsync();
+            return await _context.Users.Include(q => q.Phones)
+                .Include(q => q.Email)
+                .Include(q => q.UserCars).ThenInclude(i => i.Car)
+                .ToListAsync();
         }
 
         // GET: api/Users/5

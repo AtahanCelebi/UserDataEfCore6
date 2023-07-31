@@ -107,23 +107,9 @@ namespace UserDataEfCoreNet6.Controllers
                 user.Email.EmailAddress = userDto.Email.EmailAddress;
             }
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(new { message = "Kullanıcı başarıyla güncellendi" });
         }
 
         // POST: api/Users

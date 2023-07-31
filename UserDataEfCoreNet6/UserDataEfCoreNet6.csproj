@@ -31,6 +31,7 @@
     <None Remove="Models\Phone\" />
     <None Remove="Models\Email\" />
     <None Remove="Configuration\" />
+    <None Remove="Models\Car\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />
@@ -40,5 +41,6 @@
     <Folder Include="Models\Email\" />
     <Folder Include="Configuration\" />
     <Folder Include="Configuration\" />
+    <Folder Include="Models\Car\" />
   </ItemGroup>
 </Project>

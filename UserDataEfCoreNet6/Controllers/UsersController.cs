@@ -26,13 +26,26 @@ namespace UserDataEfCoreNet6.Controllers
 
         // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UserResponseDto>>> GetUsers()
         {
-            return await _context.Users.Include(q => q.Phones)
+            var users = await _context.Users
+                .Include(q => q.Phones)
                 .Include(q => q.Email)
                 .Include(q => q.UserCars).ThenInclude(i => i.Car)
                 .ToListAsync();
+
+            var userDtos = users.Select(user => new UserResponseDto
+            {
+                Id = user.Id,
+                Name = user.Name,
+                EmailAddress = user.Email?.EmailAddress,
+                Phones = user.Phones?.Select(q => q.PhoneNumber).ToList(),
+                CarNames = user.UserCars?.Select(q => q.Car.CarName).ToList()
+            }).ToList();
+
+            return userDtos;
         }
+
 
         // GET: api/Users/5
         [HttpGet("{id}")]

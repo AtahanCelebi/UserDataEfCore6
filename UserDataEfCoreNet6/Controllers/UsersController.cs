@@ -75,7 +75,80 @@ namespace UserDataEfCoreNet6.Controllers
         }
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutUser(int id, UserResponseDto userPutDto)
+        {
+            if (id != userPutDto.Id)
+            {
+                return BadRequest();
+            }
+
+            var user = await _context.Users
+                .Include(q => q.Phones)
+                .Include(q => q.Email)
+                .Include(q => q.UserCars).ThenInclude(i => i.Car)
+                .FirstOrDefaultAsync(j => j.Id == id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            if (!string.IsNullOrEmpty(userPutDto.Name))
+            {
+                user.Name = userPutDto.Name;
+            }
+
+            if (userPutDto.Phones?.Any() == true)
+            {
+                // Remove phones that are not in the updated list
+                var phoneNumbers = userPutDto.Phones.ToList();
+                user.Phones.RemoveAll(q => !phoneNumbers.Contains(q.PhoneNumber));
+
+                // Update existing phones or add new ones
+                foreach (var phoneNumber in phoneNumbers)
+                {
+                    var phone = user.Phones.FirstOrDefault(q => q.PhoneNumber == phoneNumber);
+                    if (phone == null)
+                    {
+                        phone = new Phone { PhoneNumber = phoneNumber };
+                        user.Phones.Add(phone);
+                    }
+                }
+            }
+
+            if (!string.IsNullOrEmpty(userPutDto.EmailAddress))
+            {
+                if (user.Email == null)
+                {
+                    user.Email = new Email();
+                }
+                user.Email.EmailAddress = userPutDto.EmailAddress;
+            }
+
+            if (userPutDto.CarNames?.Any() == true)
+            {
+                // Remove cars that are not in the updated list
+                var carNames = userPutDto.CarNames.ToList();
+                user.UserCars.RemoveAll(q => !carNames.Contains(q.Car.CarName));
+
+                // Update existing cars or add new ones
+                foreach (var carName in carNames)
+                {
+                    var userCar = user.UserCars.FirstOrDefault(q => q.Car.CarName == carName);
+                    if (userCar == null)
+                    {
+                        var car = new Car { CarName = carName };
+                        user.UserCars.Add(new UserCar { Car = car });
+                    }
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Kullanıcı başarıyla güncellendi" });
+        }
+
 
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

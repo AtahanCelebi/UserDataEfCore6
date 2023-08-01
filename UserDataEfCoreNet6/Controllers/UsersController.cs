@@ -117,7 +117,7 @@ namespace UserDataEfCoreNet6.Controllers
                 }
             }
 
-            if (!string.IsNullOrEmpty(userPutDto.EmailAddress))
+            if (userPutDto.EmailAddress != null)
             {
                 if (user.Email == null)
                 {
@@ -125,6 +125,11 @@ namespace UserDataEfCoreNet6.Controllers
                 }
                 user.Email.EmailAddress = userPutDto.EmailAddress;
             }
+            else
+            {
+                user.Email = null;
+            }
+
 
             if (userPutDto.CarNames?.Any() == true)
             {

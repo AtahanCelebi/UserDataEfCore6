@@ -28,6 +28,11 @@ namespace UserDataEfCoreNet6.Data
                 .WithMany(j => j.UserCars)
                 .HasForeignKey(k => k.CarId);
 
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Phones)
+                .WithOne(p => p.User)
+                .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<User>().HasData(
                 new User
